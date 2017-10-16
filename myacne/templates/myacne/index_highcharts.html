@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    {%load staticfiles%}
+    <meta charset="utf-8">
+    <meta content="stuff, to, help, search, engines, not" name="keywords">
+    <meta content="What this page is about." name="description">
+    <meta content="Display Webcam Stream" name="title">
+    <title>拍照</title>
+    <style type="text/css">
+        html{
+           /* height:950px;*/
+            overflow:auto;
+            background:url(../static/images/web_login_bg.jpg) no-repeat center;
+            background-size:cover;
+        }
+        body{
+            width:100%;
+            height:100%;
+            overflow: visible;
+        }
+        .gallery-container {
+            margin-left: auto;
+            margin-right: auto;
+            margin-top:0px;
+            width:1320px;
+            height:900px;
+            background-color: #fff;
+            color: #35373a;
+            min-height: 100vh;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        .gallery-container h1 {
+            text-align: center;
+            /*margin-top: 70px;*/
+            position: relative;
+            top: 40px;
+            left: auto;
+            right: auto; 
+            font-family: 'Droid Sans', sans-serif;
+            font-weight: bold;
+        }
+        .tz-gallery {
+            position: relative;
+            top:40px;
+            padding: 10px;
+        }
+        .button {
+            position: relative;
+            top:40px;
+            padding: 10px;
+        }
+        .imageform {
+            position: relative;
+            top: 40px;
+            padding: inherit;
+        }
+        #picture {
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        #save {
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        #present {
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        .se2{  
+            z-index: 1;  
+            opacity: 0;  
+        }  
+        .se2:hover{  
+            cursor: pointer;  
+        } 
+        .se1:hover{
+            cursor: pointer;
+        }
+        .image{
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        .image p1{
+            position: absolute;
+            left: 486px
+        }
+        input[type=text]{
+            position: absolute;
+            left: 560px;
+            height: 23px;
+            border: none;
+            background-color: #27A9E3;
+            color: white;
+        }
+        input[type=submit]{
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        #videoElement{
+            border-radius: 6px;
+        }
+        #canvasElement{
+            border-radius: 6px;
+        }
+        .modal{ 
+            /* 任意样式 */ 
+            /*background-color: white; */
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+            /*border-radius: 5px; 
+            box-shadow: 2px 2px 2px rgba(0,0,0,0.2); */
+            height:400px; 
+            width:800px; 
+            /* 设置弹出窗固定在页面，并且居中显示 */
+            position:fixed; 
+            top:100px;  
+            z-index: 1;
+        }
+        #myfirstchart{
+            height: inherit; 
+            width: inherit; 
+        }
+        .modal::backdrop { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-color: rgba(0,0,0,0.8); 
+        }
+        #caveat{
+            height: 300px;
+            width: 600px;
+            border-radius: 6px;
+        }
+        #waiting{
+            height: 150px;
+            width: 300px;
+            border-radius: 6px;
+        }
+    </style>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <script src="/static/javascript/jquery.imgareaselect.pack.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="/static/javascript/jquery.form.js"></script>
+    <script type="text/javascript">  
+        
+        {%if username%}
+        $(document).ready(function($) {
+        
+            var video = document.getElementById('videoElement');
+            var canvas = document.getElementById('canvasElement');
+            var ctx = canvas.getContext('2d');
+            var button_pic = document.getElementById('picture');
+            var button_save = document.getElementById('save');
+            var dialog = document.getElementById('thechart');
+            var caveat = document.getElementById('caveat');
+            var waiting = document.getElementById('waiting');
+            var stream=null;
+            var imagedata;
+            
+            /*    initialize the highcharts    */
+            var chart = {
+                type: 'bar'
+            };
+            var title = {
+                text: '问题皮肤检测结果'
+            };
+            var subtitle = {
+                text: '1.前6项：六类痤疮占痤疮皮肤的比例  2.痤疮：问题皮肤占总皮肤的比例  3.按Esc退出'
+            }
+            var xAxis = {
+                categories: ['白头', '黑头', '丘疹', '脓包', '囊肿', '结节', '痤疮'],
+                crosshair: true
+            };
+            var yAxis = {
+                min: 0,
+                title: {
+                    text: '百分比(%)'
+                }
+            }
+            var series = [{
+                showInLegend: false,
+                data: [0, 0, 0 ,0 ,0 ,0 ,0]
+            }];
+            var credits = {
+                enabled: false
+            }
+            var json = {};
+            json.chart = chart;
+            json.title = title;
+            json.subtitle = subtitle;
+            json.xAxis = xAxis;
+            json.yAxis = yAxis;
+            json.series = series;
+            json.credits = credits;
+            
+            
+            /*    ajaxform    */
+            var option = {
+                url: '/picture/',
+                datatype: 'json',
+                beforeSubmit: function(){
+                    /*var upimage = getElementById('imageinput').value;
+                    ctx.drawImage(upimage);*/
+                    waiting.showModal();
+                },
+                success: function(feedback){
+                    waiting.close();
+                    if(feedback['status']==0){
+                        bt_ratio = feedback['bt_ratio'];
+                        ht_ratio = feedback['ht_ratio'];
+                        qz_ratio = feedback['qz_ratio'];
+                        nb_ratio = feedback['nb_ratio'];
+                        nz_ratio = feedback['nz_ratio'];
+                        jj_ratio = feedback['jj_ratio'];
+                        abnormal_ratio = feedback['abnormal_ratio'];
+                        var series = [{
+                            showInLegend: false,
+                            name: '',
+                            data: [bt_ratio*100, ht_ratio*100, qz_ratio*100, nb_ratio*100, nz_ratio*100, jj_ratio*100, abnormal_ratio*100]
+                        }];
+                        json.series = series;
+                        $('#myfirstchart').highcharts(json);
+                        dialog.showModal();
+                    }
+                    else if(feedback['status'] == 1){
+                        alert('后台错误，请重试');
+                    }
+                    else if(feedback['status'] == 2){
+                       //waiting.close();
+                        alert('文件错误，请重新登录');
+                    }
+                    else if(feedback['status'] == 3){
+                        alert('请不要上传超过一张图片');
+                    }
+                }
+            }
+            $('#form').ajaxForm(option);
+
+            /*validate whether blank*/
+            function validation(){
+                var image=document.forms['form']['imageinput'].value;
+                if(image==null){
+                    alert("请选择图片");
+                    return false;
+                }
+                else return true; 
+            }
+            
+            
+            /*validate the method of getUserMedia()*/
+            function ifgetusermidea(){
+                return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia || navigator.msGetUserMedia);
+            }
+            function hasGetUserMedia(){
+                if(ifgetusermidea()){
+                    return true;
+                    //alert("Fine"); 
+                }
+                else{
+                    //alert("getUserMedia() is not supported");
+                    return false;
+                } 
+            }
+        
+            if(hasGetUserMedia()){
+                //good to go
+            }
+            else{
+                alert("getUserMedia() is not supported")
+            }
+            
+            
+            /*get the videa through the web camera*/
+            navigator.getUserMedia = navigator.getUserMedia||navigator.webkitGetUserMedia||navigator.mozGetUserMedia || navigator.msGetUserMedia;
+ 
+            if(navigator.getUserMedia){  
+            
+                navigator.getUserMedia({video: true}, handleVideo, videoError);
+            }
+            else{
+                alert("Something is wrong.")
+            }
+ 
+            function handleVideo(stream) {
+                video.src = window.URL.createObjectURL(stream);
+                localMediaStream=stream;
+            }
+ 
+            function videoError(e) {
+                console.log("Rejected",e);
+            }
+            
+                        
+            /*the function of taking a picture*/
+            function snapshot(){
+                if(localMediaStream){
+                    ctx.drawImage(video,0,0,1280,960,0,0,1280,960);   
+                }
+            }
+            
+            /*upload the image pictured*/
+            function upload(){
+                waiting.showModal();
+                imagedata = canvas.toDataURL();
+                requestData = {
+                    file: imagedata.split(',')[1]
+                }
+                $.post("/picture/", requestData, function(feedback){
+                    waiting.close();
+                    if(feedback['status']==0){
+                        bt_ratio = feedback['bt_ratio'];
+                        ht_ratio = feedback['ht_ratio'];
+                        qz_ratio = feedback['qz_ratio'];
+                        nb_ratio = feedback['nb_ratio'];
+                        nz_ratio = feedback['nz_ratio'];
+                        jj_ratio = feedback['jj_ratio'];
+                        abnormal_ratio = feedback['abnormal_ratio'];
+                        var series = [{
+                            showInLegend: false,
+                            name: '',
+                            data: [bt_ratio*100, ht_ratio*100, qz_ratio*100, nb_ratio*100, nz_ratio*100, jj_ratio*100, abnormal_ratio*100]
+                        }];
+                        json.series = series;
+                        $('#myfirstchart').highcharts(json);
+                        dialog.showModal();
+                    }
+                    else if(feedback['status'] == 1){
+                        alert('后台错误，请重新检测');
+                    }
+                    else if(feedback['status'] == 2){
+                        alert('文件错误，请重新登录');
+                    }
+                });
+            }
+            
+
+            /*    add event listener    */
+            button_pic.addEventListener('click',snapshot,false);
+            button_save.addEventListener('click',upload,false);
+            $('#present').click(function(){
+                $('#myfirstchart').highcharts(json);
+                dialog.showModal();
+            });
+         
+        })
+         
+        
+    
+        {%endif%}
+    </script>
+
+    
+</head>
+<body style="text-align:center;">
+    
+    {%if username%}
+    
+    <dialog class="modal" id = "thechart">
+        <div id="myfirstchart"></div>  
+    </dialog>
+    
+    <dialog class="modal" id="caveat">
+        <p>后台错误，请重新检测</p>
+    </dialog>
+
+    <dialog class="modal" id="waiting">
+        <p>检测中，请等待</p>
+    </dialog>
+    
+    <div class="gallery-container">
+        <h1>欢迎,{{username}}</h1>
+
+        <div class="tz-gallery" >
+
+            <video width="640" height="480" autoplay="true" id="videoElement"></video>
+            <canvas width="640" height="480" id="canvasElement" ></canvas>
+
+        </div>
+
+        <div class="button">
+            <button name="button1" id="picture">拍摄</button>
+            <button name="button2" id="save">保存</button>
+            <button name="button3" id="present">显示</button>
+        </div>        
+
+        <div class="imageform">
+            <form  id="form" action="" enctype="multipart/form-data" method="post">
+
+                <div class="image">
+                    <p1 class="se1">选择图片</p1>
+                    
+                    <input type="text" name='textfield' id='textfield' class='txt' /> 
+                    
+                    <input type="file" id="imageinput" class="se2" name="myimage" multiple=""  onchange="document.getElementById('textfield').value=this.value"/>
+                    
+                </div>
+                <input type="submit" value="上传"/>
+
+            </form>
+         </div>
+    </div>
+    <!--
+    <div id="myfirstchart" style="height: 250px; width: 650px; position: relative; left: 40px; top: 20px"></div>
+    -->
+
+    {%else%}
+    <h>请登录</h>
+    <br />
+    <a href="https://www.acnepredictor.com">返回登陆界面</a>
+    {%endif%}
+    
+    
+</body>
+
+</html>

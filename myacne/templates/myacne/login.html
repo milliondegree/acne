@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="description" content="一种面部问题皮肤图片的检测服务">
+    <meta name="author" content="1287140246@qq.com">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+    <meta http-equiv="Pragma" content="no-cache"> 
+    <meta http-equiv="Cache-Control" content="no-cache"> 
+    <meta http-equiv="Expires" content="0"> 
+    <title>登录</title>
+    <link href="/static/css/login.css" type="text/css" rel="stylesheet"> 
+    <script>
+        function validateForm(){
+            var username=document.forms["Users"]["username"].value
+            var password=document.forms["Users"]["password"].value
+            if(username==null||username=="") {
+                return alert("用户名不能为空");
+                return false;
+            }
+            else if(password==null||password==""){
+                return alert("密码不能为空");
+                return false;
+            }
+            else return true;
+        }
+    </script>
+</head>
+<body> 
+
+<div class="login">
+    <div class="message">面部皮肤图像采集系统</div>
+    <div id="darkbannerwrap"></div>
+    
+    <form name="Users" method="post" onsubmit="return validateForm()">
+		<input name="action" value="login" type="hidden">
+		<input name="username" placeholder="用户名" required="" type="text">
+		<hr class="hr15">
+		<input name="password" placeholder="密码" required="" type="password">
+		<hr class="hr15">
+		<input value="登录" style="width:100%;" type="submit">
+		<hr class="hr20">
+		<!-- 帮助 <a onClick="alert('请联系管理员')">忘记密码</a> -->
+	</form>
+
+	
+</div>
+
+<!--
+<div class="copyright">© 2016品牌名称 by<a href="http://www.17sucai.com/" target="_blank">17素材网</a></div>
+-->
+
+</body>
+
+</html>
+
+    

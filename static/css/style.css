@@ -1,0 +1,30 @@
+body, html {
+    height: 100%;
+}
+
+div.nav-wrapper {
+    width: 90%;
+    margin: auto;
+}
+
+div.card {
+    max-width: 600px;
+    margin-top: 50px;
+}
+
+
+div.card-image {
+    max-width: 600px;
+}
+
+div.card-content {
+    max-width: 600px;
+    align: center;
+}
+
+img.acne {
+    max-width: 600px;
+    max-height: 600px;
+    width: auto;
+    height: auto;
+}

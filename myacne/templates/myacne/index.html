@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    {%load staticfiles%}
+    <meta charset="utf-8">
+    <meta content="stuff, to, help, search, engines, not" name="keywords">
+    <meta content="What this page is about." name="description">
+    <meta content="Display Webcam Stream" name="title">
+    <title>拍照</title>
+    <style type="text/css">
+        html{
+           /* height:950px;*/
+            overflow:auto;
+            background:url(../static/images/web_login_bg.jpg) no-repeat center;
+            background-size:cover;
+        }
+        body{
+            width:100%;
+            height:100%;
+            overflow: visible;
+            
+            
+        }
+        .gallery-container {
+            /*position: absolute;
+            top: 0%;
+            left: 14%;*/
+            margin-left: auto;
+            margin-right: auto;
+            margin-top:0px;
+            width:1320px;
+            height:900px;
+            background-color: #fff;
+            color: #35373a;
+            min-height: 100vh;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        .gallery-container h1 {
+            text-align: center;
+            /*margin-top: 70px;*/
+            position: relative;
+            top: 40px;
+            left: auto;
+            right: auto; 
+            font-family: 'Droid Sans', sans-serif;
+            font-weight: bold;
+        }
+        .tz-gallery {
+            position: relative;
+            top:40px;
+            padding: 10px;
+        }
+        .button {
+            position: relative;
+            top:40px;
+            padding: 10px;
+        }
+        .imageform {
+            position: relative;
+            top: 40px;
+            padding: inherit;
+        }
+        #picture {
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        #save {
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        .se2{  
+            z-index: 1;  
+            opacity: 0;  
+        }  
+        /*.se1{  
+            width:100px;  
+            height:36px;  
+            font-size:16px;  
+            color:#fff;  
+            background: #28abde;  
+            border-radius:5px;   
+        } */
+        .se2:hover{  
+            cursor: pointer;  
+        } 
+        .se1:hover{
+            cursor: pointer;
+        }
+        .image{
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        .image p1{
+            position: absolute;
+            left: 486px
+        }
+        input[type=text]{
+            position: absolute;
+            left: 560px;
+            height: 23px;
+            border: none;
+            background-color: #27A9E3;
+            color: white;
+        }
+        input[type=submit]{
+            background-color: #27A9E3;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        
+        .modal{ 
+            /* 任意样式 */ 
+            /*background-color: white; */
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+            /*border-radius: 5px; 
+            box-shadow: 2px 2px 2px rgba(0,0,0,0.2); */
+            height:400px; 
+            width:800px; 
+            /* 设置弹出窗固定在页面，并且居中显示 */
+            position:fixed; 
+            top:100px;  
+            z-index: 1;
+        }
+        #myfirstchart{
+            height: inherit; 
+            width: inherit; 
+            position: relative; 
+            top: 20px;
+            margin: 0 auto;
+            overflow: overlay;
+        }
+        .modal::backdrop { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-color: rgba(0,0,0,0.8); 
+        }
+    </style>
+    <!--
+    <script type="text/javascript" src="/static/javascript/jquery.js"></script>
+    -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <script src="/static/javascript/jquery.imgareaselect.pack.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript">  
+        
+        {%if username%}
+        $(document).ready(function($) {
+            
+            /*$(".se2").on("change","input[type='image']",function(){
+                var filePath=$(this).val();
+                if(filePath.indexOf("jpg")!=-1 || filePath.indexOf("png")!=-1){
+                    $(".fileerrorTip").html("").hide();
+                    var arr=filePath.split('\\');
+                    var fileName=arr[arr.length-1];
+                    $(".txt").value=fileName;
+                }else{
+                    $(".showFileName").html("");
+                    $(".fileerrorTip").html("您未上传文件，或者您上传文件类型有误！").show();
+                    return false 
+                }
+            })*/
+        
+            var video = document.getElementById('videoElement');
+            var canvas = document.getElementById('canvasElement');
+            var ctx = canvas.getContext('2d');
+            var button_pic = document.getElementById('picture');
+            var button_save = document.getElementById('save');
+            var dialog = document.querySelector("dialog")
+            var stream=null;
+            var imagedata;
+
+            new Morris.Bar({
+                    element: 'myfirstchart',
+                    data: [
+                        {classes: '白头', value: 0.18},
+                        {classes: '黑头', value: 0.18},
+                        {classes: '丘疹', value: 0.18},
+                        {classes: '脓包', value: 0.18},
+                        {classes: '囊肿', value: 0.18},
+                        {classes: '结节', value: 0.18},
+                        {classes: '痤疮', value: 0.18}
+                    ],
+                    xkey: 'classes',
+                    ykeys: ['value'],
+                    labels: ['value'],
+                    barColors: ['#27A9E3'],
+                });
+            
+            /*    a method to open a html    */
+            function openwin() 
+            { 
+                OpenWindow=window.open("","newwin","height=250,width=250,toolbar=no,scrollbars="+scroll+",menubar=no"); 
+                //写成一行 
+                OpenWindow.document.write("<TITLE>例子</TITLE>") ;
+                OpenWindow.document.write("<BODY BGCOLOR=#FFFFFF>") ;
+                OpenWindow.document.write("<H1>Hello!</h1>"); 
+                OpenWindow.document.write("New window opened!") ;
+                OpenWindow.document.write("</BODY >") ;
+                OpenWindow.document.write("</HTML>") ;
+                OpenWindow.document.close(); 
+            } 
+            
+            /*validate whether blank*/
+            function validation(){
+                var image=document.forms['form']['imageinput'].value;
+                if(image==null){
+                    alert("请选择图片");
+                    return false;
+                }
+                else return true;
+            }
+            
+            
+            /*validate the method of getUserMedia()*/
+            function ifgetusermidea(){
+                return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
+                navigator.mozGetUserMedia || navigator.msGetUserMedia);
+            }
+            function hasGetUserMedia(){
+                if(ifgetusermidea()){
+                    return true;
+                    //alert("Fine"); 
+                }
+                else{
+                    //alert("getUserMedia() is not supported");
+                    return false;
+                }
+            }
+        
+            if(hasGetUserMedia()){
+                //good to go
+            }
+            else{
+                alert("getUserMedia() is not supported")
+            }
+            
+            
+            /*get the videa through the web camera*/
+            navigator.getUserMedia = navigator.getUserMedia||navigator.webkitGetUserMedia||navigator.mozGetUserMedia || navigator.msGetUserMedia;
+ 
+            if(navigator.getUserMedia){  
+            
+                navigator.getUserMedia({video: true}, handleVideo, videoError);
+            }
+            else{
+                alert("Something is wrong.")
+            }
+ 
+            function handleVideo(stream) {
+                video.src = window.URL.createObjectURL(stream);
+                localMediaStream=stream;
+            }
+ 
+            function videoError(e) {
+                console.log("Rejected",e);
+            }
+            
+                        
+            /*the function of taking a picture*/
+            function snapshot(){
+                //alert("ok");
+                //openwin();
+                
+                /*    test Line-graph    */
+                /*new Morris.Line({
+                    // ID of the element in which to draw the chart.
+                    element: 'myfirstchart',
+                    // Chart data records -- each entry in this array corresponds to a point on
+                    // the chart.
+                    data: [
+                        { year: '2008', value: 20 },
+                        { year: '2009', value: 10 },
+                        { year: '2010', value: 5 },
+                        { year: '2011', value: 5 },
+                        { year: '2012', value: 20 }
+                      ],
+                    // The name of the data record attribute that contains x-values.
+                    xkey: 'year',
+                    // A list of names of data record attributes that contain y-values.
+                    ykeys: ['value'],
+                    // Labels for the ykeys -- will be displayed when you hover over the
+                    // chart.
+                    labels: ['Value']
+                });*/
+                
+                /*    test Bar-graph    */
+               /* new Morris.Bar({
+                    element: 'myfirstchart',
+                    data: [
+                        {classes: '白头', value: 0.18},
+                        {classes: '黑头', value: 0.18},
+                        {classes: '丘疹', value: 0.18},
+                        {classes: '脓包', value: 0.18},
+                        {classes: '囊肿', value: 0.18},
+                        {classes: '结节', value: 0.18},
+                        {classes: '痤疮', value: 0.18}
+                    ],
+                    xkey: 'classes',
+                    ykeys: ['value'],
+                    labels: ['value'],
+                    resize: true
+                });*/
+                
+                
+                if(localMediaStream){
+                    //alert("ok");
+                    ctx.drawImage(video,0,0,1280,960,0,0,1280,960);
+                    
+                }
+                
+                
+                /*new Morris.Bar({
+                    element: 'myfirstchart',
+                    data: [
+                        {classes: '白头', value: 0.18},
+                        {classes: '黑头', value: 0.18},
+                        {classes: '丘疹', value: 0.18},
+                        {classes: '脓包', value: 0.18},
+                        {classes: '囊肿', value: 0.18},
+                        {classes: '结节', value: 0.18},
+                        {classes: '痤疮', value: 0.18}
+                    ],
+                    xkey: 'classes',
+                    ykeys: ['value'],
+                    labels: ['value'],
+                    barColors: ['#27A9E3'],
+                });*/
+                
+                dialog.showModal();
+                $('#close').click(function(){
+                    dialog.close();
+                });
+                
+            }
+            
+            /*upload the image pictured*/
+            function upload(){
+                
+                imagedata = canvas.toDataURL();
+                //console.log(imagedata);
+                
+                /*console.log(imagedata.split(',')[0]);
+                imagedata = imagedata.split(',')[1];
+                
+                imagedata = window.atob(imagedata);
+                //console.log(imagedata);
+                
+                var arrayimage = new Uint8Array(imagedata.length);
+                for (var i = 0; i < imagedata.length; i++){
+                    arrayimage[i] = imagedata.charCodeAt(i);
+                }
+                console.log(arrayimage);
+                
+                var blob = new Blob([arrayimage], {type:"image/jpg"});
+                console.log(blob);
+                
+                var formdata = new FormData();
+                formdata.append('file', blob);
+                console.log(formdata);*/
+                
+                /*   upload-method one */
+                /*requestdata = {
+                    file: imagedata.split(',')[1],
+                }
+                
+                $.ajax({
+                    url:"/picture/",
+                    type:"POST",
+                    data:requestdata,
+                    processData: false,
+                    //cache: false,
+                    //enctype: "multipart/form-data",
+                    success:function(){
+                        alert("upload succeed!");
+                    }
+                });*/
+                
+                
+                /*upload-method two*/
+                requestData = {
+                    file: imagedata.split(',')[1]
+                }
+                $.post("/picture/", requestData, function(feedback){
+                    alert(feedback['class0'].toString() + ' ' + feedback['class1'].toString() + ' ' + feedback['class3'].toString() + ' ' + feedback['abnormal_ratio'].toString());
+                });
+            }
+            
+            button_pic.addEventListener('click',snapshot,false);
+            button_save.addEventListener('click',upload,false);
+         
+        })
+         
+        
+    
+        {%endif%}
+    </script>
+
+    
+</head>
+<body style="text-align:center;">
+    
+    {%if username%}
+    
+    <dialog class="modal" id = "thechart">
+        
+        
+        <div id="myfirstchart"></div>
+        <button id = "close" style = "position: relative; top: 20px;">关闭</button>
+        
+    </dialog>
+
+    <div class="gallery-container">
+        <h1>欢迎,{{username}}</h1>
+
+        <div class="tz-gallery" >
+
+            <video width="640" height="480" autoplay="true" id="videoElement"></video>
+            <canvas width="640" height="480" id="canvasElement" ></canvas>
+
+        </div>
+
+        <div class="button">
+            <button name="button1" id="picture">拍摄</button>
+            
+            <button name="button2" id="save">保存</button>
+            
+        </div>        
+
+        <div class="imageform">
+            <form  id="form" action="" enctype="multipart/form-data" method="post">
+
+                <div class="image">
+                    <p1 class="se1">选择图片</p1>
+                    
+                    <input type="text" name='textfield' id='textfield' class='txt' /> 
+                    
+                    <input type="file" id="imageinput" class="se2" name="myimage" multiple=""  onchange="document.getElementById('textfield').value=this.value"/>
+                    
+                </div>
+                <input type="submit" value="上传" onclick="validation"/>
+
+            </form>
+         </div>
+    </div>
+    <!--
+    <div id="myfirstchart" style="height: 250px; width: 650px; position: relative; left: 40px; top: 20px"></div>
+    -->
+
+    {%else%}
+    <h>请登录</h>
+    <br />
+    <a href="https://www.acnepredictor.com">返回登陆界面</a>
+    {%endif%}
+    
+    
+</body>
+
+</html>

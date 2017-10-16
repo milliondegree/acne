@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    {%load staticfiles%}
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>浏览图片</title>
+	<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/static/css/demo.css">
+	<link rel="stylesheet" href="/static/css/baguetteBox.min.css">
+	<link rel="stylesheet" href="/static/css/gallery-grid.css">
+    <link href="/static/css/signStyle.css" rel="stylesheet">
+    <style type="text/css">
+        .fydiv{width: 320px;text-align: center;height: 30px;margin: 0 auto;margin-top: 30px;}
+        .fenye{text-align: center;height: 30px;margin: 0 auto; color: white;}
+        .fenye li{float: left;border:1px solid #27A9E3;height: 30px;line-height: 26px;margin-right: 10px;}
+        .fenye li:hover{background-color: white;}
+        .fenye li a{text-decoration: none;color:#27A9E3; display: block; }
+        .prev{width: 66px;}
+        .next{width: 66px;}
+        .numb{width: 26px;}
+        .choose{border:1px solid white!important;}
+        .choose a{color: #27A9E3!important;}
+    </style>
+    
+    <script type="text/javascript" src="/static/javascript/baguetteBox.min.js"></script>
+    <script type="text/javascript" src="../static/javascript/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../static/javascript/jquery-sign.mini.js"></script>
+    <script type="text/javascript">
+       /* $(document).ready(function(){
+		  //baguetteBox.run('.tz-gallery');
+        
+            for(var j=0; j<9; j++){
+                $('#ref'+j).click(function(){
+                    var choose='#baguetteBox-figure-'+j;
+                    $.sign.bindSign(choose);
+                    //$('#baguetteBox-figure-0').hide();
+                    //$('#image0').hide();  
+                    //$('p').hide();
+                });
+            }
+        });*/
+	</script>
+    
+</head>
+<body>
+    {%if chozen_user%}
+	<div class="htmleaf-container">
+		
+		<div class="container gallery-container">
+
+		    <h1>这里是{{chozen_user}}的图片</h1>
+
+		    <p class="page-description text-center">请选择图片并进行标记</p>
+		    
+		    <div class="tz-gallery">
+
+		        <div class="row">
+                </div>
+                
+                <div class="fydiv">
+                    <ul class="fenye">
+                    </ul>
+                </div>
+
+		  </div>
+
+
+	   </div>
+    </div>
+
+    
+    <script type="text/javascript">
+       // $(document).ready(function(){
+            getPage(1);
+            $.sign.bindSign('.col-sm-6 col-md-4');
+            function getPage(pn){
+                var dataCount={{ picnum|safe }};//总数据条数
+                var pageSize=9;//每页显示条数
+                var pageCount= Math.ceil(dataCount / pageSize);//总页数
+                if(pn==0||pn>pageCount){
+                    return;
+                }
+                var ul=$(".row");
+                ul.empty();
+                //console.log(pageCount+"..."+pn)
+                paintPage(pageCount,pn);   //绘制页码
+                var startPage = pageSize * (pn - 1);
+
+                if (pageCount == 1) {     // 当只有一页时 
+                    for (var j = 0; j < dataCount; j++) {  
+                    /*var target=""
+                    target.concat('/media/123456/',j.toString(),'.jpg');*/
+                    var e="<div class='col-sm-6 col-md-4' id='image"+j+"'><a class='lightbox' id='ref"+j+"' href='/media/"+{{chozen_user}}+"/uncertain/"+j+".jpg'><img src='/media/"+{{chozen_user}}+"/uncertain/"+j+".jpg' alt=j></a></div>";
+                    ul.append(e);
+                    //$.sign.bindSign('#image'+j);
+                }
+                }else {      // 当超过一页时 
+                    var e=""; 
+                    var endPage = pn<pageCount?pageSize * pn:dataCount;
+                    for (var j = startPage; j < endPage; j++) {  
+                        var e="<div class='col-sm-6 col-md-4' id='image"+j+"'><a class='lightbox' id='ref"+j+"' href='/media/"+{{chozen_user}}+"/uncertain/"+j+".jpg'><img src='/media/"+{{chozen_user}}+"/uncertain/"+j+".jpg' alt=j></a></div>";
+                        ul.append(e);
+                        //$.sign.bindSign('#image'+j);
+                    }
+                }
+                baguetteBox.run('.tz-gallery');
+                
+            }
+
+            function paintPage(number,currNum)  //number 总页数,currNum 当前页  
+            {
+                var pageUl=$(".fenye");
+                pageUl.empty();
+                var ulDetail="";
+
+                if(number==1){
+                    ulDetail= "<li class=\"prev\"><a href=\"javascript:void(0)\">上一页</a></li>"+
+                    "<li class=\"numb choose\"><a href=\"javascript:getPage(1)\">1</a></li>"+
+                    "<li class=\"next\"><a href=\"javascript:void(0)\">下一页</a></li>";
+                }else if(number==2){
+                    ulDetail= "<li class=\"prev\"><a href=\"javascript:getPage(1)\">上一页</a></li>"+
+                    "<li class=\"numb"+choosele(currNum,1)+"\"><a href=\"javascript:getPage(1)\">1</a></li>"+
+                    "<li class=\"numb"+choosele(currNum,2)+"\"><a href=\"javascript:getPage(2)\">2</a></li>"+
+                    "<li class=\"next\"><a href=\"javascript:getPage(2)\">下一页</a></li>";
+                }else if(number==3){
+                     ulDetail= "<li class=\"prev\"><a href=\"javascript:getPage("+parseInt(currNum-1)+")\">上一页</a></li>"+
+                     "<li class=\"numb"+choosele(currNum,1)+"\"><a href=\"javascript:getPage(1)\">1</a></li>"+
+                     "<li class=\"numb"+choosele(currNum,2)+"\"><a href=\"javascript:getPage(2)\">2</a></li>"+
+                     "<li class=\"numb"+choosele(currNum,3)+"\"><a href=\"javascript:getPage(3)\">3</a></li>"+
+                     "<li class=\"next\"><a href=\"javascript:getPage("+parseInt(currNum+1)+")\">下一页</a></li>";
+                }else if(number==currNum&&currNum>3){
+                     ulDetail= "<li class=\"prev\"><a href=\"javascript:getPage("+parseInt(currNum-1)+")\">上一页</a></li>"+
+                     "<li class=\"numb\"><a href=\"javascript:getPage("+parseInt(currNum-2)+")\">"+parseInt(currNum-2)+"</a></li>"+
+                     "<li class=\"numb\"><a href=\"javascript:getPage("+parseInt(currNum-1)+")\">"+parseInt(currNum-1)+"</a></li>"+
+                     "<li class=\"numb choose\"><a href=\"javascript:getPage("+currNum+")\">"+currNum+"</a></li>"+
+                     "<li class=\"next\"><a href=\"javascript:getPage("+currNum+")\">下一页</a></li>";
+                }else if(currNum==1&&number>3){
+                     ulDetail= "<li class=\"prev\"><a href=\"javascript:void(0)\">上一页</a></li>"+
+                     "<li class=\"numb choose\"><a href=\"javascript:void(0)\">1</a></li>"+
+                     "<li class=\"numb\"><a href=\"javascript:getPage(2)\">2</a></li>"+
+                     "<li class=\"numb\"><a href=\"javascript:getPage(3)\">3</a></li>"+
+                     "<li class=\"next\"><a href=\"javascript:getPage(2)\">下一页</a></li>";
+                }else{
+                     ulDetail= "<li class=\"prev\"><a href=\"javascript:getPage("+parseInt(currNum-1)+")\">上一页</a></li>"+
+                     "<li class=\"numb\"><a href=\"javascript:getPage("+parseInt(currNum-1)+")\">"+parseInt(currNum-1)+"</a></li>"+
+                     "<li class=\"numb choose\"><a href=\"javascript:getPage("+currNum+")\">"+currNum+"</a></li>"+
+                     "<li class=\"numb\"><a href=\"javascript:getPage("+parseInt(currNum+1)+")\">"+parseInt(currNum+1)+"</a></li>"+
+                     "<li class=\"next\"><a href=\"javascript:getPage("+parseInt(currNum+1)+")\">下一页</a></li>";
+                 }
+
+                $(".fenye").append(ulDetail);
+
+            }
+            
+            function choosele(num,cur){
+                if(num==cur){
+                    return " choose";
+                }else{
+                    return "";
+                }
+            }
+       // });
+    </script>
+    
+    {%else%}
+    <div style="text-align: center; color: black;">
+        <h>请登录</h>
+        <br />
+        <a href="https://acnepredictor.com">返回登陆界面</a>
+    </div>
+    {%endif%}
+    
+</body>
+</html>

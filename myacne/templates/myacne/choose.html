@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+    <meta name="description" content="一种面部问题皮肤图片的检测服务">
+    <meta name="author" content="1287140246@qq.com">
+    -->
+    {%load staticfiles%}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+    <meta http-equiv="Pragma" content="no-cache"> 
+    <meta http-equiv="Cache-Control" content="no-cache"> 
+    <meta http-equiv="Expires" content="0"> 
+    <title>选择用户</title> 
+    <style type="text/css">
+        html{
+           /* height:950px;*/
+            overflow:auto;
+            background:url(../static/images/web_login_bg.jpg) no-repeat center;
+            background-size:cover;
+        }
+        body{
+            width:100%;
+            height:100%;
+            overflow: visible;
+        }
+        .gallery-container {
+            /*position: absolute;
+            top: 0%;
+            left: 14%;*/
+            margin-left: auto;
+            margin-right: auto;
+            margin-top:0px;
+            width:1320px;
+            height:900px;
+            background-color: #fff;
+            color: #35373a;
+            min-height: 100vh;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06);
+        }
+        .gallery-container h1 {
+            text-align: center;
+            /*margin-top: 70px;*/
+            position: relative;
+            top: 40px;
+            left: auto;
+            right: auto; 
+            font-family: 'Droid Sans', sans-serif;
+            font-weight: bold;
+        }
+        .tip{
+            margin-top: 200px;   
+        }
+        
+        
+        
+        input[type=text],
+        input[type=file],
+        input[type=password],
+        input[type=email], select {
+            border: 1px solid #DCDEE0;
+            vertical-align: middle;
+            border-radius: 3px;
+            height: 50px;
+            padding: 0px 16px;
+            font-size: 14px;
+            color: #555555;
+            outline:none;
+            width:306px;
+        }
+        select {
+            border: 1px solid #DCDEE0;
+            vertical-align: middle;
+            border-radius: 3px;
+            height: 50px;
+            padding: 0px 16px;
+            font-size: 14px;
+            color: #555555;
+            outline:none;
+            width:338px;
+        }
+        input[type=text]:focus,
+        input[type=file]:focus,
+        input[type=password]:focus,
+        input[type=email]:focus, select:focus {
+            border: 1px solid #27A9E3;
+        }
+
+
+        input[type=submit],
+        input[type=button]{
+            display: inline-block;
+            vertical-align: middle;
+            padding: 12px 24px;
+            margin: 0px;
+            font-size: 18px;
+            line-height: 24px;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            color: #ffffff;
+            background-color: #27A9E3;
+            border-radius: 3px;
+            border: none;
+            -webkit-appearance: none;
+            outline:none;
+            width:340px;
+        }
+        hr.hr15 {
+            height: 15px;
+            border: none;
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+        }
+        hr.hr20 {
+            height: 20px;
+            border: none;
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+        }
+        
+    </style>
+    <script>
+        function validateForm(){
+            var username=document.forms["Users"]["username"].value
+            var password=document.forms["Users"]["password"].value
+            if(username==null||username=="") {
+                return alert("用户名不能为空");
+                return false;
+            }
+            else if(password==null||password==""){
+                return alert("密码不能为空");
+                return false;
+            }
+            else return true;
+        }
+    </script>
+</head>
+<body style="text-align: center;"> 
+
+ {%if username%}
+
+    <div class="gallery-container">
+        <h1>欢迎,{{username}}</h1>
+        <div class="tip" id="tip1">
+            <form method="post" id="form1" action="" enctype="multipart/form-data">
+                
+                <select name="chozen_user">
+                    {% for item in list %}
+                    <option value={{item}}>{{item}}</option>
+                    {% endfor %}
+                </select>
+                <hr class="hr15">
+                <input type="submit" value="选择" />
+            </form>
+        </div>
+        
+        <div class="tip" id="tip2">
+            <form name="Users" method="post" onsubmit="return validateForm()">
+                <input name="action" value="login" type="hidden">
+                <input name="username" placeholder="用户名" required="" type="text">
+                <hr class="hr15">
+                <input name="password" placeholder="密码" required=false type="text">
+                <hr class="hr15">
+                <input value="注册" type="submit">
+            <hr class="hr20">
+	    </form>
+        </div>
+    </div>
+
+    {%else%}
+    <h>请登录</h>
+    <br />
+    <a href="https://www.acnepredictor.com">返回登陆界面</a>
+    {%endif%}
+    
+</body>
+</html>
