@@ -25,7 +25,7 @@ SECRET_KEY = 'i6q((2wd8a%v%bx7i)-f5u=b6%e8b1r1%2w7yjehwg4q7gvi_='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.200','localhost','127.0.0.1','60.205.182.221',u'www.acnepredictor.com']
+ALLOWED_HOSTS = [u'www.acnepredictor.com']
 
 
 # Application definition
